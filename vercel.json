@@ -2,14 +2,13 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
   "buildCommand": "npm run build",
+  "installCommand": "npm ci",
   "rewrites": [
     {
       "source": "/__/auth/:path*",
       "destination": "https://adv-diary-100ff.firebaseapp.com/__/auth/:path*"
     }
   ],
-  "installCommand": "npm ci",
-  "outputDirectory": "out",
   "headers": [
     {
       "source": "/(.*)",
