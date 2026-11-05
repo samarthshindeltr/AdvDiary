@@ -112,6 +112,11 @@
   bottom: calc(5rem + env(safe-area-inset-bottom, 0px));
 }
 
+@media (min-width: 1024px) {
+  .app-main { padding-bottom: 2rem; }
+  .app-fab { right: 2rem; bottom: 2rem; }
+}
+
 @media (max-width: 639px) {
   input, select, textarea { font-size: 16px; }
 }

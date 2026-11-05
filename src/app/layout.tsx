@@ -35,9 +35,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <AuthGate>
             <Toaster>
               <DataProvider>
-                <div className="flex flex-col min-h-screen max-w-lg mx-auto">
-                  <main className="flex-1 app-main">
-                    {children}
+                <div className="min-h-screen lg:flex">
+                  <main className="w-full min-w-0 flex-1 app-main lg:ml-64 lg:px-8 lg:py-8 lg:pb-8">
+                    <div className="mx-auto w-full max-w-[1440px]">
+                      {children}
+                    </div>
                   </main>
                   <BottomNav />
                 </div>
