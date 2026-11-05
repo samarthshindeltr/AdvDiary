@@ -50,3 +50,20 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# IDEs and editors
+.vscode/
+.idea/
+.vs/
+
+# Build output
+/dist/
+/.turbo/
+bin/
+obj/
+target/
+
+# Logs and debug output
+*.log
+tsc-output.txt
+Thumbs.db
