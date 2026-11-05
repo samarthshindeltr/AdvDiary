@@ -28,7 +28,9 @@ Import `trendingshortsltr-cyber/Advwebapp` into Vercel and deploy the `main` bra
 
 In the Vercel project settings, add the Firebase web configuration variables from `.env.example` for each environment you use (`NEXT_PUBLIC_FIREBASE_API_KEY`, `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`, `NEXT_PUBLIC_FIREBASE_PROJECT_ID`, `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET`, `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID`, `NEXT_PUBLIC_FIREBASE_APP_ID`, and `NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID` when configured). These values are embedded in the browser bundle; the API key is not a secret. Restrict it in Google Cloud Console to the deployed site and required APIs. Never add service-account credentials.
 
-Add the assigned Vercel domain to Firebase Authentication's authorized domains, or Google sign-in will fail. Firestore remains hosted by Firebase; deploy its rules and indexes separately when they change:
+Mobile Google sign-in uses Firebase's redirect flow. Vercel proxies `/__/auth/*` to the Firebase project, and the browser uses the current app hostname as `authDomain` so mobile browsers do not need third-party storage access. Add every production app hostname to Firebase Authentication's authorized domains and add `https://<hostname>/__/auth/handler` to the Google OAuth client's authorized redirect URIs. Google sign-in will fail if either entry is missing. Firebase Hosting deployments should likewise use their actual hosting hostname and have it authorized.
+
+Firestore remains hosted by Firebase; deploy its rules and indexes separately when they change:
 
 ```powershell
 firebase deploy --only firestore:rules,firestore:indexes --project adv-diary-100ff

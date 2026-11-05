@@ -4,8 +4,12 @@ import {
   type ReactNode
 } from "react";
 import {
+  browserLocalPersistence,
+  getRedirectResult,
   onAuthStateChanged,
+  setPersistence,
   signInWithPopup,
+  signInWithRedirect,
   signOut,
   type User
 } from "firebase/auth";
@@ -33,6 +37,12 @@ interface AuthCtx {
 }
 
 const AuthContext = createContext<AuthCtx | null>(null);
+
+function shouldUseGoogleRedirect() {
+  const userAgent = navigator.userAgent;
+  return /Android|iPhone|iPad|iPod|IEMobile|Opera Mini|Mobile/i.test(userAgent) ||
+    (navigator.maxTouchPoints > 1 && /Macintosh/i.test(userAgent));
+}
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -99,6 +109,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         );
       }
     });
+    void getRedirectResult(auth).catch((err: unknown) => {
+      const code = (err as { code?: string })?.code;
+      if (code === "auth/unauthorized-domain") {
+        setAuthError("This site is not authorized for Firebase sign-in. Add this domain to the project's Authorized domains.");
+        return;
+      }
+      setAuthError("Google sign-in could not be completed. Please try again.");
+    });
     return () => {
       profileGeneration++;
       unsubscribeAuth();
@@ -155,6 +173,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signInWithGoogle = useCallback(async () => {
     setAuthError(null);
     try {
+      await setPersistence(auth, browserLocalPersistence);
+      if (shouldUseGoogleRedirect()) {
+        await signInWithRedirect(auth, googleProvider);
+        return;
+      }
       await signInWithPopup(auth, googleProvider);
     } catch (err: unknown) {
       const code = (err as { code?: string })?.code;
@@ -176,6 +199,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       if (code === "auth/popup-blocked") {
         setAuthError("Popup was blocked by your browser. Please allow popups for this site.");
+        return;
+      }
+      if (code === "auth/web-storage-unsupported" || code === "auth/unsupported-persistence-type") {
+        setAuthError("This browser cannot save your sign-in session. Enable site storage and try again.");
         return;
       }
       setAuthError("Sign-in failed. Check your Firebase Authentication configuration and try again.");
