@@ -5,6 +5,10 @@
   "installCommand": "npm ci",
   "rewrites": [
     {
+      "source": "/__/auth/:path*/",
+      "destination": "https://adv-diary-100ff.firebaseapp.com/__/auth/:path*"
+    },
+    {
       "source": "/__/auth/:path*",
       "destination": "https://adv-diary-100ff.firebaseapp.com/__/auth/:path*"
     }
@@ -41,6 +45,15 @@
         {
           "key": "Cache-Control",
           "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/__/auth/:path*",
+      "headers": [
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
         }
       ]
     }
